@@ -2,6 +2,9 @@
 logs
 *.log
 npm-debug.log*
+.DS_Store
+*.un~
+.sw*
 
 # Runtime data
 pids
