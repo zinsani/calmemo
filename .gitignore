@@ -4,7 +4,7 @@ logs
 npm-debug.log*
 .DS_Store
 *.un~
-.sw*
+*.sw*
 
 # Runtime data
 pids

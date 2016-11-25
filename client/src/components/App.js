@@ -1,21 +1,68 @@
 // @flow
 import React, { Component } from 'react';
-import logo from '../logo.svg';
-import './App.scss';
+import 'bootstrap/dist/css/bootstrap.css';
+import { Router, Link, browserHistory } from 'react-router'
+import { firebaseAuth } from '../config';
+import { logout } from '../helpers/auth'
 
 class App extends Component {
+  state = {
+    authed: false,
+    loading: true,
+  }
+
+  componentDidMount () {
+    this.removeListener = firebaseAuth().onAuthStateChanged((user) => {
+      console.log('fireabaseAuth fired');
+      if (user) {
+        this.setState({
+          authed: true,
+          loading: false,
+        })
+        browserHistory.push('/dashboard');
+      } else {
+        this.setState({
+          loading: false
+        })
+        browserHistory.push('/login');
+      }
+    })
+  }
+
+  componentWillUnmount () {
+    this.removeListener()
+  }
+
   render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+    return this.state.loading === true ? <h1>Loading</h1> : (<div>
+      <nav className="navbar navbar-default navbar-static-top">
+        <div className="container">
+          <div className="navbar-header">
+            <Link to="/dashboard" className="navbar-brand">CalMemo</Link>
+          </div>
+          <ul className="nav navbar-nav pull-right">
+            <li>
+              {this.state.authed
+                ? <button
+                style={{border: 'none', background: 'transparent'}}
+                onClick={() => {
+                  logout()
+                  this.setState({authed: false})
+                  // router.transitionTo('/')
+                  browserHistory.push('/login');
+                }}
+                className="navbar-brand">Logout</button>
+                  : <span>
+                  <Link to="/login" className="navbar-brand">Login</Link>
+                  </span>}
+            </li>
+          </ul>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      </nav>
+      <div className="contents">
+        { this.props.children }
       </div>
-    );
+    </div>);
   }
 }
 
