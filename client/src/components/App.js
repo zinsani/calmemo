@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-import { Router, Link, browserHistory } from 'react-router'
+import { Link, browserHistory } from 'react-router'
 import { firebaseAuth } from '../config';
 import { logout } from '../helpers/auth'
 
