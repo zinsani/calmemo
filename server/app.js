@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var auth = require('./routes/auth');
 
 var app = express();
 
@@ -19,7 +20,25 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/api/users', auth, users);
+
+/* mysql connection */
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host    :'localhost',
+    port : 3306,
+    user : 'calmemo',
+    password : '00000123',
+    database:'calmemo'
+});
+
+connection.connect(function(err) {
+    if (err) {
+        console.error('mysql connection error');
+        console.error(err);
+        throw err;
+    }
+});
 
 
 // application -------------------------------------------------------------
