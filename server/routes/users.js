@@ -13,16 +13,13 @@ var pool = mysql.createPool({
   database: "calmemo"
 });
 
-
-
 /* POST users listing. commonauth/login */
 router.post('/', function (req, res, next) {
-  var insert_query = "insert into users set ? ";
+  var insert_query = 'insert into users set ? ,write_dt = now()';
   var users = {
-    display_name: mysql.escape(req.body.display_name),
-    email: mysql.escape(req.body.email),
-    photo_url: mysql.escape(req.body.photo_url),
-    write_dt: 'NOW()'
+    display_name: req.body.display_name,
+    email: req.body.email,
+    photo_url: req.body.photo_url
   };
 
   pool.getConnection(function (err, connection) {
@@ -34,37 +31,33 @@ router.post('/', function (req, res, next) {
       // Don't use the connection here, it has been returned to the pool.
     });
   });
-
-  
 });
 
 /* GET users listing. commonauth/login */
 router.get('/', function (req, res) {
-  debug(req.query.userId);
-  debug(req.query.address);
-  debug(req.query.userId);
-
   var user = {
-    'userid': req.query.userId,
-    'name': req.query.name,
-    'address': req.query.address,
+    'users_uid': req.query.users_uid,
+    'display_name': req.query.display_name,
+    'email': req.query.email,
   };
 
   var dynamicQuery = '';
 
-  if (typeof user.userid != 'undefined') {
-    dynamicQuery += ' and userid = ' + mysql.escape(user.userid);
+  if (typeof user.users_uid != 'undefined') {
+    dynamicQuery += ' and users_uid = ' + mysql.escape(user.users_uid);
   }
 
-  if (typeof user.address != 'undefined') {
-    dynamicQuery += ' and address = ' + mysql.escape(user.address);
+if (typeof user.email != 'undefined') {
+    dynamicQuery += ' and email = ' + mysql.escape(user.email);
   }
 
-  if (typeof user.name != 'undefined') {
-    dynamicQuery += ' and name = ' + mysql.escape(user.name);
+  if (typeof user.display_name != 'undefined') {
+    dynamicQuery += ' and display_name = ' + mysql.escape(user.display_name);
   }
 
-  debug("bsoh : " + dynamicQuery);
+  
+
+  console.log("bsoh : " + dynamicQuery);
 
   var finamQuery = 'select * from users where 1=1 ' + dynamicQuery;
   debug(" finamQuery : " + finamQuery);
